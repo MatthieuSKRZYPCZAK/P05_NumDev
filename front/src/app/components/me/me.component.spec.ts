@@ -18,7 +18,6 @@ import {By} from "@angular/platform-browser";
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
-  let userService: UserService;
   let router: Router;
   let snackBar: MatSnackBar;
   let sessionService: SessionService;
@@ -65,7 +64,6 @@ describe('MeComponent', () => {
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
 
-    userService = TestBed.inject(UserService)
     router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
     sessionService = TestBed.inject(SessionService);
