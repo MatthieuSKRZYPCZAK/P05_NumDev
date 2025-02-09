@@ -2,38 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import { expect } from '@jest/globals';
-import {RegisterRequest} from "../interfaces/registerRequest.interface";
-import {LoginRequest} from "../interfaces/loginRequest.interface";
-import {SessionInformation} from "../../../interfaces/sessionInformation.interface";
+import { mockRegisterRequest, mockLoginRequest, mockSessionInformation } from "../../../mocks/mock-data";
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
 
-  // Initialisation des données pour une requête d'inscription
-  const registerRequest: RegisterRequest = {
-    email: 'newUser@example.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    password:'password12345'
-  };
-
-  // Initialisation des données pour une requête de connexion
-  const loginRequest: LoginRequest = {
-    email: 'test@example.com',
-    password: 'password12345'
-  };
-
-  // Initialisation des données pour la réponse de session après connexion
-  const mockSessionInformation: SessionInformation = {
-    token: 'fake-token',
-    type: 'mockType',
-    id: 777,
-    username: 'JohnDoe',
-    firstName: 'John',
-    lastName: 'Doe',
-    admin: false
-  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -57,7 +31,7 @@ describe('AuthService', () => {
   it('should allow user to register', done => {
 
     // Appel de la méthode register() avec les données d'inscription
-    service.register(registerRequest).subscribe({
+    service.register(mockRegisterRequest).subscribe({
       complete: () => done()
     });
 
@@ -68,7 +42,7 @@ describe('AuthService', () => {
     });
 
     // Vérification que le corps de la requête envoyée correspond bien aux données attendues
-    expect(req.request.body).toEqual(registerRequest);
+    expect(req.request.body).toEqual(mockRegisterRequest);
 
     // Simulation d'une réponse vide du serveur (l'inscription ne renvoie pas de données)
     req.flush({});
@@ -81,7 +55,7 @@ describe('AuthService', () => {
   it('should allow user to login', done => {
 
     // Appel de la méthode login() avec les données de connexion
-    service.login(loginRequest).subscribe(response => {
+    service.login(mockLoginRequest).subscribe(response => {
       // Vérification que la réponse obtenue est bien celle attendue
       expect(response).toEqual(mockSessionInformation);
       done(); // On signale que le test est terminé après la réponse
@@ -94,7 +68,7 @@ describe('AuthService', () => {
     });
 
     // Vérification que le corps de la requête envoyée correspond bien aux données attendues
-    expect(req.request.body).toEqual(loginRequest);
+    expect(req.request.body).toEqual(mockLoginRequest);
 
     // Simule une réponse du serveur avec les informations fictives
     req.flush(mockSessionInformation);

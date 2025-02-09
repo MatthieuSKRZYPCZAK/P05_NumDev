@@ -10,7 +10,7 @@ import { expect } from '@jest/globals';
 
 import { MeComponent } from './me.component';
 import {UserService} from "../../services/user.service";
-import {User} from "../../interfaces/user.interface";
+import { mockUser } from "../../mocks/mock-data";
 import {Router} from "@angular/router";
 import {of} from "rxjs";
 import {By} from "@angular/platform-browser";
@@ -22,17 +22,6 @@ describe('MeComponent', () => {
   let router: Router;
   let snackBar: MatSnackBar;
   let sessionService: SessionService;
-
-  // Mock d'un utilisateur
-  const mockUser: User = {
-    id: 1,
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    admin: true,
-    password: 'password12345',
-    createdAt: new Date('2024-01-01T15:00:00')
-  }
 
   // Mock du service de session
   const mockSessionService = {
