@@ -62,6 +62,7 @@ describe('SessionService', () => {
   it('should emit login state changes', done => {
     service.$isLogged().subscribe((loggedIn) => {
       expect(loggedIn).toBe(true);
+      expect(service.sessionInformation).toEqual(mockSession);
       done();
     });
     service.logIn(mockSession);
@@ -74,6 +75,7 @@ describe('SessionService', () => {
     service.logIn(mockSession);
     service.$isLogged().subscribe((loggedIn) => {
       expect(loggedIn).toBe(false);
+      expect(service.sessionInformation).toBeUndefined();
       done();
     });
     service.logOut();
