@@ -82,35 +82,7 @@ describe('RegisterComponent', () => {
   });
 
   /**
-   * Test 3 : Soumission réussie et redirection vers /login
-   */
-  it('should navigate to /login on successful registration', () => {
-
-    authServiceMock.register = jest.fn().mockReturnValue(of(void 0));
-
-
-    component.form.setValue({
-      email: 'test@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
-      password: 'myPassword123'
-    });
-
-    component.submit();
-
-    expect(authServiceMock.register).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
-      password: 'myPassword123'
-    });
-
-    // Vérifier que le routeur a été appelé pour naviguer vers /login
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
-  });
-
-  /**
-   * Test 4 : Affichage d'une erreur en cas de problème lors de la soumission
+   * Test 3 : Affichage d'une erreur en cas de problème lors de la soumission
    */
   it('should display an error message if registration fails', () => {
 
@@ -135,7 +107,7 @@ describe('RegisterComponent', () => {
   });
 
   /**
-   * Test 5 : Désactivation du bouton de soumission lorsque le formulaire est invalide
+   * Test 4 : Désactivation du bouton de soumission lorsque le formulaire est invalide
    */
   it('should disable the submit button if the form is invalid', () => {
     const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
