@@ -41,7 +41,10 @@ describe('Login spec', () => {
       []).as('session')
 
     cy.get('input[formControlName=email]').type(`${user.email}`)
-    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${user.password}`)
+
+    cy.get('button[type="submit"]').contains('Submit').should('not.be.disabled');
+    cy.get('button[type="submit"]').contains('Submit').click();
 
     cy.wait('@loginSuccess')
     cy.wait('@session')
@@ -52,7 +55,10 @@ describe('Login spec', () => {
 
   it('Login with incorrect password', () => {
     cy.get('input[formControlName=email]').type(`${user.email}`)
-    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${user.password}`)
+
+    cy.get('button[type="submit"]').contains('Submit').should('not.be.disabled');
+    cy.get('button[type="submit"]').contains('Submit').click();
 
     cy.get('.error').should('be.visible').and('contain', 'An error occurred')
 
@@ -65,9 +71,9 @@ describe('Login spec', () => {
     cy.get('.error').should('be.visible').and('contain', 'An error occurred')
   })
 
-  it('Login with and invalid password format', () => {
+  it('Login with an invalid password format', () => {
     cy.get('input[formControlName=email]').type(`${""}{enter}`)
-    cy.get('input[formControlName=password]').type(`${""}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${""}{enter}`)
 
     cy.get('input[formControlName=email]').should('have.class', 'ng-invalid')
     cy.get('button[type="submit"]').should('be.disabled');
@@ -83,7 +89,7 @@ describe('Login spec', () => {
   it('Toggles password visibility when clicking the visibility button', () => {
 
     cy.get('input[formControlName=email]').type(`${user.email}`)
-    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${user.password}`)
 
     cy.get('input[formControlName=password]').should('have.attr', 'type', 'password')
     cy.get('button[mat-icon-button]').find('mat-icon').should('have.text', 'visibility_off')
@@ -107,7 +113,10 @@ describe('Login spec', () => {
       },
       []).as('session')
     cy.get('input[formControlName=email]').type(`${user.email}`)
-    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${user.password}`)
+
+    cy.get('button[type="submit"]').contains('Submit').should('not.be.disabled');
+    cy.get('button[type="submit"]').contains('Submit').click();
 
     cy.url().should('eq', Cypress.config().baseUrl + 'sessions')
     cy.get('.link').contains('Logout').click()
@@ -130,7 +139,10 @@ describe('Login spec', () => {
       []).as('session')
 
     cy.get('input[formControlName=email]').type(`${userAdmin.email}`)
-    cy.get('input[formControlName=password]').type(`${userAdmin.password}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${userAdmin.password}`)
+
+    cy.get('button[type="submit"]').contains('Submit').should('not.be.disabled');
+    cy.get('button[type="submit"]').contains('Submit').click();
 
     cy.wait('@loginSuccess')
     cy.wait('@session')
@@ -168,12 +180,15 @@ describe('Login spec', () => {
       []).as('session')
 
     cy.get('input[formControlName=email]').type(`${user.email}`)
-    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${user.password}`)
+
+    cy.get('button[type="submit"]').contains('Submit').should('not.be.disabled');
+    cy.get('button[type="submit"]').contains('Submit').click();
 
     cy.wait('@loginSuccess')
     cy.wait('@session')
 
-    cy.url().should('include', '/sessions')
+    cy.url().should('eq', Cypress.config().baseUrl + 'sessions')
     cy.get('.error').should('not.exist')
 
     cy.intercept('GET', `/api/user/${user.id}`, {
@@ -200,9 +215,9 @@ describe('Login spec', () => {
     cy.get('button[mat-raised-button][color="warn"]').contains('delete').should('be.visible');
     cy.get('button[mat-raised-button][color="warn"]').click();
     cy.wait('@deleteSuccess');
-    cy.contains('Your account has been deleted !');
 
     cy.url().should('eq', Cypress.config().baseUrl)
+    cy.get('snack-bar-container').contains('Your account has been deleted !').should('exist');
 
   })
 });
