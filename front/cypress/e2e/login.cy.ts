@@ -3,13 +3,22 @@ import CypressConfig from "../../cypress.config";
 
 describe('Login spec', () => {
 
-  const user = {
+  const userAdmin = {
     id: 1,
-    firstname: 'John',
-    lastname: 'Doe',
+    firstName: 'John',
+    lastName: 'Doe',
     email: 'john.doe@example.com',
     password: 'password12345',
-    admin: 'true'
+    admin: true
+  }
+
+  const user = {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    password: 'password12345',
+    admin: false
   }
 
   // Page de login avant chaque test
@@ -20,8 +29,9 @@ describe('Login spec', () => {
 
   it('Login successfull', () => {
     cy.intercept('POST', '/api/auth/login', {
+      statusCode: 200,
       body: user,
-    })
+    }).as('loginSuccess')
 
     cy.intercept(
       {
@@ -30,16 +40,19 @@ describe('Login spec', () => {
       },
       []).as('session')
 
-    cy.get('input[formControlName=email]').type("yoga@studio.com")
-    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
+    cy.get('input[formControlName=email]').type(`${user.email}`)
+    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+
+    cy.wait('@loginSuccess')
+    cy.wait('@session')
 
     cy.url().should('include', '/sessions')
     cy.get('.error').should('not.exist')
   })
 
   it('Login with incorrect password', () => {
-    cy.get('input[formControlName=email]').type("yoga@studio.com")
-    cy.get('input[formControlName=password]').type(`${"wrongPass"}{enter}{enter}`)
+    cy.get('input[formControlName=email]').type(`${user.email}`)
+    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
 
     cy.get('.error').should('be.visible').and('contain', 'An error occurred')
 
@@ -47,7 +60,7 @@ describe('Login spec', () => {
 
   it('Login with incorrect email', () => {
     cy.get('input[formControlName=email]').type("wrongMail@studio.com")
-    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
+    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
 
     cy.get('.error').should('be.visible').and('contain', 'An error occurred')
   })
@@ -69,12 +82,17 @@ describe('Login spec', () => {
 
   it('Toggles password visibility when clicking the visibility button', () => {
 
-    cy.get('input[formControlName=email]').type("yoga@studio.com")
-    cy.get('input[formControlName=password]').type("password12345")
+    cy.get('input[formControlName=email]').type(`${user.email}`)
+    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
 
-    cy.get('button[mat-icon-button]').contains('visibility_off').should('exist');
-    cy.get('button[mat-icon-button]').contains('visibility').click();
-    cy.get('button[mat-icon-button]').contains('visibility').should('exist');
+    cy.get('input[formControlName=password]').should('have.attr', 'type', 'password')
+    cy.get('button[mat-icon-button]').find('mat-icon').should('have.text', 'visibility_off')
+    cy.get('button[mat-icon-button]').click()
+    cy.get('input[formControlName=password]').should('have.attr', 'type', 'text')
+    cy.get('button[mat-icon-button]').find('mat-icon').should('have.text', 'visibility')
+    cy.get('button[mat-icon-button]').click()
+    cy.get('input[formControlName=password]').should('have.attr', 'type', 'password')
+    cy.get('button[mat-icon-button]').find('mat-icon').should('have.text', 'visibility_off')
   })
 
   it('Logout successfull', () => {
@@ -88,12 +106,102 @@ describe('Login spec', () => {
         url: '/api/session',
       },
       []).as('session')
-    cy.get('input[formControlName=email]').type("yoga@studio.com")
-    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
+    cy.get('input[formControlName=email]').type(`${user.email}`)
+    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
 
     cy.url().should('eq', Cypress.config().baseUrl + 'sessions')
     cy.get('.link').contains('Logout').click()
     cy.get('.error').should('not.exist')
+    cy.url().should('eq', Cypress.config().baseUrl)
+
+  })
+
+  it('Login successfull, verify admin account details', () => {
+    cy.intercept('POST', '/api/auth/login', {
+      statusCode: 200,
+      body: userAdmin,
+    }).as('loginSuccess')
+
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/session',
+      },
+      []).as('session')
+
+    cy.get('input[formControlName=email]').type(`${userAdmin.email}`)
+    cy.get('input[formControlName=password]').type(`${userAdmin.password}{enter}{enter}`)
+
+    cy.wait('@loginSuccess')
+    cy.wait('@session')
+
+    cy.url().should('include', '/sessions')
+    cy.get('.error').should('not.exist')
+
+    cy.intercept('GET', `/api/user/${userAdmin.id}`, {
+      statusCode: 200,
+      body: userAdmin,
+    }).as('getMe')
+
+    cy.get('span[routerLink=me]').click()
+    cy.wait('@getMe')
+
+    cy.url().should('eq', Cypress.config().baseUrl + 'me')
+
+    cy.contains(`${userAdmin.firstName} ${userAdmin.lastName.toUpperCase()}`).should('be.visible');
+    cy.contains(`${userAdmin.email}`).should('be.visible');
+    cy.contains('You are admin').should('be.visible');
+    cy.get('button span mat-icon').contains('delete').should('not.exist');
+  })
+
+  it('Login successfull, verify not admin account details and delete it', () => {
+    cy.intercept('POST', '/api/auth/login', {
+      statusCode: 200,
+      body: user
+    }).as('loginSuccess')
+
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/session',
+      },
+      []).as('session')
+
+    cy.get('input[formControlName=email]').type(`${user.email}`)
+    cy.get('input[formControlName=password]').type(`${user.password}{enter}{enter}`)
+
+    cy.wait('@loginSuccess')
+    cy.wait('@session')
+
+    cy.url().should('include', '/sessions')
+    cy.get('.error').should('not.exist')
+
+    cy.intercept('GET', `/api/user/${user.id}`, {
+      statusCode: 200,
+      body: user,
+    }).as('getMe')
+
+    cy.get('span[routerLink=me]').click()
+    cy.wait('@getMe')
+
+    cy.url().should('eq', Cypress.config().baseUrl + 'me')
+
+    cy.contains(`${user.firstName} ${user.lastName.toUpperCase()}`).should('be.visible');
+    cy.contains(`${user.email}`).should('be.visible');
+    cy.get('button span mat-icon').contains('delete').should('exist');
+    cy.contains('You are admin').should('not.exist');
+
+
+    cy.intercept('DELETE', `/api/user/${user.id}`, {
+      statusCode: 200,
+      body: user
+    }).as('deleteSuccess')
+
+    cy.get('button[mat-raised-button][color="warn"]').contains('delete').should('be.visible');
+    cy.get('button[mat-raised-button][color="warn"]').click();
+    cy.wait('@deleteSuccess');
+    cy.contains('Your account has been deleted !');
+
     cy.url().should('eq', Cypress.config().baseUrl)
 
   })
