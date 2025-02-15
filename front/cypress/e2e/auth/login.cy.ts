@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import CypressConfig from "../../cypress.config";
+import CypressConfig from "../../../cypress.config";
 
 describe('Login spec', () => {
 
@@ -20,6 +20,14 @@ describe('Login spec', () => {
     password: 'password12345',
     admin: false
   }
+
+  function loginAs(user: any) {
+    cy.visit('/login');
+    cy.intercept('POST', '/api/auth/login', { statusCode: 200, body: user }).as('login');
+    cy.get('input[formControlName=email]').type(user.email);
+    cy.get('input[formControlName=password]').type(user.password);
+    cy.get('button[type="submit"]').click();
+  };
 
   // Page de login avant chaque test
   beforeEach(() => {
@@ -220,4 +228,15 @@ describe('Login spec', () => {
     cy.get('snack-bar-container').contains('Your account has been deleted !').should('exist');
 
   })
+
+  it('should redirect to /login if user is not logged in', () => {
+
+    cy.intercept('GET', '/api/session', { body: { isLogged: false } }).as('sessionCheck');
+
+    cy.visit('/sessions');
+
+    // Vérifie que l'utilisateur est bien redirigé vers /login
+    cy.url().should('eq', Cypress.config().baseUrl + 'login');
+  });
+
 });
