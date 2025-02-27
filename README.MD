@@ -1,19 +1,21 @@
 # Yoga Application - Testing plan
 
 Yoga app is a full-stack application that allows individuals to join or leave
-yoga classes while enabling administrators to efficiently plan sessions based
-on instructor availability.
+yoga classes while enabling administrators to efficiently manage sessions based on teacher
+availability.
 
-This application also serves as a structured testing support, covering unit, integration
- and end-to-end tests to ensure software reliability and performance.
+This project also includes a structured testing strategy, covering unit, integration and
+end-to-end tests to ensure software reliability and performance.
 
 
 ## Table of Contents
 
 
 1. [Technologies](#technologies)
-2. [Installation](#installation)
-3. [Running the Application](#running-the-application)
+2. [Prerequisites](#prerequisites)
+3. [Installation](#installation)
+4. [Running the Application](#running-the-application)
+5. [Executing Tests](#executing-tests)
 
 ---
 
@@ -61,12 +63,124 @@ spring.datasource.username=db_user
 spring.datasource.password=db_password
 ```
 
-## Clone the Repository
+### 2. Clone the Repository
 
 First, clone the project repository from GitHub to your local machine:
 
 ```
 git clone https://github.com/MatthieuSKRZYPCZAK/P05_NumDev.git
 ```
+
+#### Backend Installation
+
+Navigate to the backend project folder:
+```
+cd back
+```
+
+Install dependencies:
+```
+mvn clean install
+```
+
+#### Frontend Installation
+
+Navigate to the frontend project folder:
+```
+cd ..
+cd front
+```
+
+Install dependencies:
+```
+npm install
+```
+---
+
+## Running the Application
+
+### 1. Launch the Backend Server
+
+Navigate to the backend project folder and start the backend server:
+```
+mvn spring-boot:run
+```
+
+The backend application will be accessible at: `http://localhost:8080`
+
+### 2. Launch the Frontend Application
+
+Navigate to the frontend project folder and start frontend application:
+```
+ng serve
+```
+
+The frontend application will be accessible at: `http://localhost:4200`
+
+---
+
+## Executing Tests
+
+### Frontend (Jest)
+
+To run the unit and integration tests for the frontend, navigate to the `front` project folder
+and execute:
+```
+npm run test
+```
+
+To generate a test coverage report:
+```
+npm run test:coverage
+```
+The coverage report will be generated in the following directory:  `front/coverage/jest/index.html`
+
+You can open this file in a web browser to visualize the test coverage report.
+
+Example of Coverage Report:
+![Coverage Report](/ressources/image/jest-test.png)
+
+### End-to-End (Cypress)
+
+To run the end-to-end tests, stay in the `front` project folder and execute:
+```
+npm run e2e
+```
+
+To generate a test coverage report after running the tests, execute:
+```
+npm run e2e:coverage
+```
+The coverage report will be generated in the following directory: `front/coverage/lcov-report/index.html`
+
+You can open this file in a web browser to visualize the test coverage report.
+
+Example of Coverage Report:
+
+![Coverage Report](/ressources/image/cypress-test.png)
+
+### Backend (JUnit & Mockito)
+
+To run the unit and integration tests for the backend, navigate to the `back` project folder
+and execute:
+```
+mvn clean test
+```
+To generate a test coverage report, execute:
+```
+mvn jacoco:report
+```
+
+The coverage report will be generated in the following directory: `back/target/site/jacoco/index.html`
+
+You can open this file in a web browser to visualize the test coverage report.
+
+Example of Coverage Report:
+![Coverage Report](/ressources/image/jacoco-test.png)
+
+
+
+
+
 
 
