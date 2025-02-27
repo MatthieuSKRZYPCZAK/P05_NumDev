@@ -69,6 +69,7 @@ First, clone the project repository from GitHub to your local machine:
 
 ```
 git clone https://github.com/MatthieuSKRZYPCZAK/P05_NumDev.git
+cd P05_NumDev
 ```
 
 #### Backend Installation
@@ -133,7 +134,7 @@ To generate a test coverage report:
 ```
 npm run test:coverage
 ```
-The coverage report will be generated in the following directory:  `front/coverage/jest/index.html`
+The coverage report will be generated in the following directory:  `front/coverage/jest/lcov-report/index.html`
 
 You can open this file in a web browser to visualize the test coverage report.
 
@@ -146,6 +147,10 @@ To run the end-to-end tests, stay in the `front` project folder and execute:
 ```
 npm run e2e
 ```
+Then, follow these steps:
+1. Select `E2E Testing`.
+2. Choose your preferred browser.
+3. Run the `main.cy.ts` test file.
 
 To generate a test coverage report after running the tests, execute:
 ```
