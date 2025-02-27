@@ -1,6 +1,6 @@
 # MySQL Setup Guide
 
-[⬅️ Back to Main README](README.md)
+[⬅️ Back to Main README](README.MD)
 
 This guide provides step-by-step instructions for configuring MySQL for this application.
 
@@ -70,4 +70,4 @@ USER yogadb;
 
 If no errors occur, the database and user have been configured successfully.
 
-[⬅️ Back to Main README](README.md)
+[⬅️ Back to Main README](README.MD)
